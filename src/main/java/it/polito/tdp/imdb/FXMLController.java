@@ -5,9 +5,11 @@
 package it.polito.tdp.imdb;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.imdb.model.Model;
+import it.polito.tdp.imdb.model.Movie;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -38,23 +40,55 @@ public class FXMLController {
     private TextField txtRank; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbMovie"
-    private ComboBox<?> cmbMovie; // Value injected by FXMLLoader
+    private ComboBox<Movie> cmbMovie; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
 
     @FXML
     void doCammino(ActionEvent event) {
-
+    	txtResult.clear();
+    	txtResult.appendText("Cammino incrementale più lungo da:  ");
+    Movie m=this.cmbMovie.getValue();
+    
+    if(m!=null) {
+    	for(Movie m1: model.calcolaPercorso(m)) {
+    		txtResult.appendText(m1+"\n");
+    	}
     }
-
-    @FXML
-    void doCreaGrafo(ActionEvent event) {
+    else {
+    	txtResult.clear();
+    	txtResult.appendText("Selezionare un Movie");
+    	return;
+    }
     	
     }
 
     @FXML
+    void doCreaGrafo(ActionEvent event) {
+    	txtResult.clear();
+    	
+    	double r;
+    	try {
+    		r=Double.parseDouble(this.txtRank.getText());
+    		if(r>0.0 && r<10.0) {
+    			txtResult.appendText(model.creaGrafo(r));
+    			this.cmbMovie.getItems().addAll(model.getVertici());
+    		}
+    		else 
+    			txtResult.appendText("Il rank deve essere compreso tra 0.0 e 10.0\n ");
+    	}catch(NumberFormatException e) {
+    		txtResult.clear();
+    		txtResult.appendText("Inserire un rank r" );
+    		return;
+    	}
+    }
+
+    @FXML
     void doGradoMax(ActionEvent event) {
+    	txtResult.clear();
+    	txtResult.appendText("Film di grado max: ");
+    		txtResult.appendText("\n"+model.getMAx());
     	
     }
 
